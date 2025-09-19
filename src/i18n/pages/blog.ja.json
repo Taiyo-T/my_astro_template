@@ -1,0 +1,31 @@
+{
+  "title": "ブログ",
+  "description": "技術ブログとチュートリアルです。Web開発について書いています。",
+  "intro": "技術ブログとチュートリアルです。最新のWeb開発技術やAstroの使い方について書いています。",
+  "blogPosts": [
+    {
+      "id": 1,
+      "title": "Astroで多言語サイトを作成する方法",
+      "excerpt": "Astroを使用して多言語対応のウェブサイトを作成する手順を詳しく解説します。",
+      "date": "2025-01-15",
+      "author": "開発者",
+      "tags": ["Astro", "i18n", "多言語", "Web開発"]
+    },
+    {
+      "id": 2,
+      "title": "TypeScriptとAstroの組み合わせ",
+      "excerpt": "TypeScriptを使ってAstroプロジェクトをより堅牢にする方法について説明します。",
+      "date": "2025-01-10",
+      "author": "開発者",
+      "tags": ["TypeScript", "Astro", "型安全性"]
+    },
+    {
+      "id": 3,
+      "title": "静的サイト生成の利点",
+      "excerpt": "SSGの利点とAstroでの実装方法について詳しく見ていきましょう。",
+      "date": "2025-01-05",
+      "author": "開発者",
+      "tags": ["SSG", "パフォーマンス", "SEO"]
+    }
+  ]
+}

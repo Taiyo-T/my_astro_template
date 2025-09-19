@@ -1,0 +1,241 @@
+---
+import Layout from "../components/Layout.astro";
+import { 
+    isValidLocale, 
+    getTranslations, 
+    getPageTranslations,
+    DEFAULT_LOCALE, 
+    ALL_LOCALES 
+} from "../i18n/config";
+
+export async function getStaticPaths() {
+    const pages = ["index", "about", "contact", "blog"];
+    const paths: any[] = [];
+    
+    // 日本語（デフォルト）のパス - slugなしで直接ルート
+    for (const page of pages) {
+        if (page === "index") {
+            paths.push({ params: { slug: undefined } });
+        } else {
+            paths.push({ params: { slug: page } });
+        }
+    }
+    
+    // 他の言語のパス
+    for (const locale of ALL_LOCALES) {
+        if (locale !== DEFAULT_LOCALE) {
+            for (const page of pages) {
+                if (page === "index") {
+                    paths.push({ params: { slug: locale } });
+                } else {
+                    paths.push({ params: { slug: `${locale}/${page}` } });
+                }
+            }
+        }
+    }
+    
+    return paths;
+}
+
+const { slug } = Astro.params;
+
+// URLからlocaleとページ名を解析
+let locale: string;
+let pageName: string;
+
+if (!slug) {
+    // ルートパス "/" 
+    locale = DEFAULT_LOCALE;
+    pageName = "index";
+} else if (isValidLocale(slug)) {
+    // "/en" のような言語コードのみ
+    locale = slug;
+    pageName = "index";
+} else if (slug.includes("/")) {
+    // "/en/about" のような形式
+    const [lang, page] = slug.split("/");
+    if (isValidLocale(lang)) {
+        locale = lang;
+        pageName = page;
+    } else {
+        // 不正な形式の場合はリダイレクト
+        return Astro.redirect("/");
+    }
+} else {
+    // "/about" のような日本語ページ
+    locale = DEFAULT_LOCALE;
+    pageName = slug;
+}
+
+if (!isValidLocale(locale)) {
+    return Astro.redirect("/");
+}
+
+const translations = getTranslations(locale);
+const pageTranslations = await getPageTranslations(locale, pageName);
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={`${pageTranslations.title || translations.hello} | ${translations.hello}`}
+    description={pageTranslations.description || translations.about}
+    currentPath={pageName === "index" ? "" : pageName}
+>
+    {pageName === "index" && (
+        <div>
+            <h1>{translations.hello}</h1>
+            <p>{translations.about}</p>
+            
+            <section>
+                <h2>{translations.aboutTitle}</h2>
+                <p>{translations.aboutContent}</p>
+            </section>
+            
+            <section>
+                <h2>{pageTranslations.pageExamples}</h2>
+                <ul>
+                    <li><a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>
+                        {pageTranslations.aboutPage}
+                    </a></li>
+                    <li><a href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}>
+                        {pageTranslations.contactPage}
+                    </a></li>
+                    <li><a href={locale === DEFAULT_LOCALE ? "/blog/" : `/${locale}/blog/`}>
+                        {pageTranslations.blogPage}
+                    </a></li>
+                </ul>
+            </section>
+        </div>
+    )}
+
+    {pageName === "about" && (
+        <div>
+            <h1>{pageTranslations.title}</h1>
+            <p>{translations.aboutContent}</p>
+            
+            <section>
+                <h2>{pageTranslations.detailsTitle}</h2>
+                <p>{pageTranslations.detailsContent}</p>
+                
+                <h3>{pageTranslations.techSpecsTitle}</h3>
+                <ul>
+                    {pageTranslations.techSpecs?.map((spec: string) => <li>{spec}</li>)}
+                </ul>
+                
+                <h3>{pageTranslations.featuresTitle}</h3>
+                <ul>
+                    {pageTranslations.features?.map((feature: string) => <li>{feature}</li>)}
+                </ul>
+            </section>
+            
+            <nav style="margin-top: 2rem;">
+                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">{pageTranslations.backHome}</a>
+                <a href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}>{pageTranslations.toContact}</a>
+            </nav>
+        </div>
+    )}
+
+    {pageName === "contact" && (
+        <div>
+            <h1>{pageTranslations.title}</h1>
+            <p>{pageTranslations.intro}</p>
+            
+            <form style="max-width: 600px; margin: 2rem 0;">
+                <div style="margin-bottom: 1rem;">
+                    <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.nameLabel}</label>
+                    <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.emailLabel}</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.subjectLabel}</label>
+                    <input type="text" id="subject" name="subject" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.messageLabel}</label>
+                    <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                
+                <button type="submit" style="background-color: #007acc; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                    {pageTranslations.submitButton}
+                </button>
+            </form>
+            
+            <section style="margin-top: 3rem;">
+                <h2>{pageTranslations.otherContactTitle}</h2>
+                <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                        <h3>{pageTranslations.emailContact}</h3>
+                        <p>info@example.com</p>
+                    </div>
+                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                        <h3>{pageTranslations.phoneContact}</h3>
+                        <p>{locale === 'ar' ? '+966-1-234-5678' : locale === 'en' ? '+1-555-123-4567' : '03-1234-5678'}</p>
+                    </div>
+                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                        <h3>{pageTranslations.addressContact}</h3>
+                        <p>
+                            {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 
+                             locale === 'en' ? 'New York, NY, USA' : 
+                             '東京都渋谷区123-456'}
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <nav style="margin-top: 2rem;">
+                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">{pageTranslations.backHome}</a>
+                <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>{pageTranslations.toAbout}</a>
+            </nav>
+        </div>
+    )}
+
+    {pageName === "blog" && (
+        <div>
+            <h1>{pageTranslations.title}</h1>
+            <p>{pageTranslations.intro}</p>
+            
+            <div style="display: grid; gap: 2rem; margin: 2rem 0;">
+                {pageTranslations.blogPosts?.map((post: any) => (
+                    <article style="padding: 1.5rem; border: 1px solid #eee; border-radius: 8px; transition: box-shadow 0.2s ease;">
+                        <h2 style="margin: 0 0 0.5rem 0;">
+                            <a href={`/${locale}/blog/${post.id}/`} style="text-decoration: none; color: #333;">
+                                {post.title}
+                            </a>
+                        </h2>
+                        
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                            <span>{translations.posted}: {post.date}</span>
+                            <span>{translations.author}: {post.author}</span>
+                        </div>
+                        
+                        <p style="margin: 1rem 0; line-height: 1.6;">{post.excerpt}</p>
+                        
+                        <div style="display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap;">
+                            {post.tags.map((tag: string) => (
+                                <span style="background-color: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                        
+                        <a href={`/${locale}/blog/${post.id}/`} style="color: #007acc; text-decoration: none; font-weight: bold;">
+                            {translations.readMore} →
+                        </a>
+                    </article>
+                ))}
+            </div>
+            
+            <nav style="margin-top: 2rem;">
+                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">← {translations.backToHome}</a>
+                <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>About →</a>
+            </nav>
+        </div>
+    )}
+</Layout>

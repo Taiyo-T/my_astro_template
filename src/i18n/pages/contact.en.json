@@ -1,0 +1,16 @@
+{
+  "title": "Contact Us",
+  "description": "Contact us with your questions or feedback.",
+  "intro": "If you have any questions or feedback, please feel free to contact us using the form below.",
+  "nameLabel": "Name *",
+  "emailLabel": "Email Address *",
+  "subjectLabel": "Subject *",
+  "messageLabel": "Message *",
+  "submitButton": "Send Message",
+  "otherContactTitle": "Other Contact Methods",
+  "emailContact": "Email",
+  "phoneContact": "Phone",
+  "addressContact": "Address",
+  "backHome": "← Back to Home",
+  "toAbout": "About →"
+}

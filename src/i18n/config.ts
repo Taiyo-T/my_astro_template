@@ -37,3 +37,20 @@ export function getLocalePath(locale: Locale, path: string = ""): string {
     }
     return `/${locale}/${path}`.replace(/\/+/g, "/").replace(/\/$/, "") || `/${locale}`;
 }
+
+// ページ固有の翻訳を読み込む関数
+export async function getPageTranslations(locale: Locale, pageName: string): Promise<any> {
+    try {
+        const pageTranslations = await import(`./pages/${pageName}.${locale}.json`);
+        return pageTranslations.default;
+    } catch (error) {
+        console.warn(`Page translations not found for ${pageName}.${locale}.json, falling back to default`);
+        try {
+            const defaultPageTranslations = await import(`./pages/${pageName}.${DEFAULT_LOCALE}.json`);
+            return defaultPageTranslations.default;
+        } catch (fallbackError) {
+            console.error(`Could not load page translations for ${pageName}`);
+            return {};
+        }
+    }
+}

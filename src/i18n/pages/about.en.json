@@ -1,0 +1,22 @@
+{
+  "title": "About This Site",
+  "description": "Learn more about this multilingual Astro website.",
+  "detailsTitle": "Detailed Information",
+  "detailsContent": "This is a multilingual site created using Astro. It supports Japanese, English, and Arabic languages.",
+  "techSpecsTitle": "Technical Specifications",
+  "featuresTitle": "Features",
+  "techSpecs": [
+    "Framework: Astro",
+    "Language: TypeScript", 
+    "Internationalization: Custom i18n solution",
+    "Supported Languages: Japanese (default), English, Arabic"
+  ],
+  "features": [
+    "Static Site Generation (SSG)",
+    "SEO Optimized",
+    "RTL (Right-to-Left) language support",
+    "Responsive Design"
+  ],
+  "backHome": "← Back to Home",
+  "toContact": "Contact Us →"
+}

@@ -1,0 +1,22 @@
+{
+  "title": "このサイトについて",
+  "description": "このAstro多言語サイトについて詳しく学びましょう。",
+  "detailsTitle": "詳細情報",
+  "detailsContent": "これはAstroを使用して作成された多言語サイトです。日本語、英語、アラビア語に対応しています。",
+  "techSpecsTitle": "技術仕様",
+  "featuresTitle": "特徴",
+  "techSpecs": [
+    "フレームワーク: Astro",
+    "言語: TypeScript",
+    "国際化: カスタムi18nソリューション",
+    "対応言語: 日本語（デフォルト）、英語、アラビア語"
+  ],
+  "features": [
+    "静的サイト生成 (SSG)",
+    "SEO最適化",
+    "RTL（右から左）言語対応",
+    "レスポンシブデザイン"
+  ],
+  "backHome": "← ホームに戻る",
+  "toContact": "お問い合わせ →"
+}

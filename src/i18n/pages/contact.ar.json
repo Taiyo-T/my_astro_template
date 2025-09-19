@@ -1,0 +1,16 @@
+{
+  "title": "اتصل بنا",
+  "description": "تواصل معنا بأسئلتك أو ملاحظاتك.",
+  "intro": "إذا كان لديك أي أسئلة أو ملاحظات، فلا تتردد في الاتصال بنا باستخدام النموذج أدناه.",
+  "nameLabel": "الاسم *",
+  "emailLabel": "عنوان البريد الإلكتروني *",
+  "subjectLabel": "الموضوع *",
+  "messageLabel": "الرسالة *",
+  "submitButton": "إرسال الرسالة",
+  "otherContactTitle": "طرق الاتصال الأخرى",
+  "emailContact": "البريد الإلكتروني",
+  "phoneContact": "الهاتف",
+  "addressContact": "العنوان",
+  "backHome": "← العودة للرئيسية",
+  "toAbout": "حول ←"
+}
