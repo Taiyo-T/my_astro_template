@@ -1,0 +1,22 @@
+{
+  "hello": "مرحبا!",
+  "about": "هذا موقع Astro.",
+  "aboutTitle": "حول هذا الموقع",
+  "aboutContent": "هذه صفحة حول باللغة العربية.",
+  "contact": "اتصل بنا",
+  "blog": "المدونة",
+  "home": "الرئيسية",
+  "navigation": "التنقل",
+  "language": "اللغة",
+  "pageExamples": "أمثلة الصفحات",
+  "backToHome": "العودة للرئيسية",
+  "readMore": "اقرأ المزيد",
+  "posted": "تاريخ النشر",
+  "author": "المؤلف",
+  "tags": "العلامات",
+  "categories": "الفئات",
+  "search": "البحث",
+  "noResults": "لم يتم العثور على نتائج",
+  "loading": "جاري التحميل...",
+  "error": "حدث خطأ"
+}

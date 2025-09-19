@@ -1,0 +1,156 @@
+---
+import Layout from "../../components/Layout.astro";
+import { isValidLocale, getTranslations, DEFAULT_LOCALE, ALL_LOCALES } from "../../i18n/config";
+
+export async function getStaticPaths() {
+    return ALL_LOCALES.filter(locale => locale !== DEFAULT_LOCALE).map(lang => ({
+        params: { lang }
+    }));
+}
+
+const { lang } = Astro.params;
+
+if (!lang || !isValidLocale(lang)) {
+    return Astro.redirect(`/${DEFAULT_LOCALE}/blog/`);
+}
+
+const locale = lang;
+const translations = getTranslations(locale);
+
+// 多言語対応のブログ投稿データ
+const blogPostsData = {
+    en: [
+        {
+            id: 1,
+            title: "How to Create Multilingual Sites with Astro",
+            excerpt: "A detailed guide on creating multilingual websites using Astro framework.",
+            date: "2025-01-15",
+            author: "Developer",
+            tags: ["Astro", "i18n", "Multilingual", "Web Development"]
+        },
+        {
+            id: 2,
+            title: "Combining TypeScript with Astro",
+            excerpt: "Learn how to make your Astro projects more robust using TypeScript.",
+            date: "2025-01-10",
+            author: "Developer",
+            tags: ["TypeScript", "Astro", "Type Safety"]
+        },
+        {
+            id: 3,
+            title: "Benefits of Static Site Generation",
+            excerpt: "Exploring the advantages of SSG and how to implement it with Astro.",
+            date: "2025-01-05",
+            author: "Developer",
+            tags: ["SSG", "Performance", "SEO"]
+        }
+    ],
+    ar: [
+        {
+            id: 1,
+            title: "كيفية إنشاء مواقع متعددة اللغات باستخدام Astro",
+            excerpt: "دليل مفصل حول إنشاء مواقع ويب متعددة اللغات باستخدام إطار عمل Astro.",
+            date: "2025-01-15",
+            author: "المطور",
+            tags: ["Astro", "i18n", "متعدد اللغات", "تطوير الويب"]
+        },
+        {
+            id: 2,
+            title: "دمج TypeScript مع Astro",
+            excerpt: "تعلم كيفية جعل مشاريع Astro أكثر قوة باستخدام TypeScript.",
+            date: "2025-01-10",
+            author: "المطور",
+            tags: ["TypeScript", "Astro", "أمان الأنواع"]
+        },
+        {
+            id: 3,
+            title: "فوائد توليد المواقع الثابتة",
+            excerpt: "استكشاف مزايا SSG وكيفية تنفيذه باستخدام Astro.",
+            date: "2025-01-05",
+            author: "المطور",
+            tags: ["SSG", "الأداء", "تحسين محركات البحث"]
+        }
+    ],
+    ja: [
+        {
+            id: 1,
+            title: "Astroで多言語サイトを作成する方法",
+            excerpt: "Astroを使用して多言語対応のウェブサイトを作成する手順を詳しく解説します。",
+            date: "2025-01-15",
+            author: "開発者",
+            tags: ["Astro", "i18n", "多言語", "Web開発"]
+        },
+        {
+            id: 2,
+            title: "TypeScriptとAstroの組み合わせ",
+            excerpt: "TypeScriptを使ってAstroプロジェクトをより堅牢にする方法について説明します。",
+            date: "2025-01-10",
+            author: "開発者",
+            tags: ["TypeScript", "Astro", "型安全性"]
+        },
+        {
+            id: 3,
+            title: "静的サイト生成の利点",
+            excerpt: "SSGの利点とAstroでの実装方法について詳しく見ていきましょう。",
+            date: "2025-01-05",
+            author: "開発者",
+            tags: ["SSG", "パフォーマンス", "SEO"]
+        }
+    ]
+};
+
+const blogPosts = blogPostsData[locale];
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={`${translations.blog} | ${translations.hello}`}
+    description={locale === 'en' ? "Technical blog and tutorials about web development." : 
+                locale === 'ar' ? "مدونة تقنية ودروس حول تطوير الويب." :
+                "技術ブログとチュートリアルです。Web開発について書いています。"}
+    currentPath="blog"
+>
+    <h1>{translations.blog}</h1>
+    <p>
+        {locale === 'en' ? "Technical blog and tutorials about the latest web development technologies and Astro framework." :
+         locale === 'ar' ? "مدونة تقنية ودروس حول أحدث تقنيات تطوير الويب وإطار عمل Astro." :
+         "技術ブログとチュートリアルです。最新のWeb開発技術やAstroの使い方について書いています。"}
+    </p>
+    
+    <div style="display: grid; gap: 2rem; margin: 2rem 0;">
+        {blogPosts.map(post => (
+            <article style="padding: 1.5rem; border: 1px solid #eee; border-radius: 8px; transition: box-shadow 0.2s ease;">
+                <h2 style="margin: 0 0 0.5rem 0;">
+                    <a href={`/${locale}/blog/${post.id}/`} style="text-decoration: none; color: #333;">
+                        {post.title}
+                    </a>
+                </h2>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                    <span>{translations.posted}: {post.date}</span>
+                    <span>{translations.author}: {post.author}</span>
+                </div>
+                
+                <p style="margin: 1rem 0; line-height: 1.6;">{post.excerpt}</p>
+                
+                <div style="display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap;">
+                    {post.tags.map(tag => (
+                        <span style="background-color: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                
+                <a href={`/${locale}/blog/${post.id}/`} style="color: #007acc; text-decoration: none; font-weight: bold;">
+                    {translations.readMore} →
+                </a>
+            </article>
+        ))}
+    </div>
+    
+    <nav style="margin-top: 2rem;">
+        <a href={`/${locale === 'ja' ? '' : locale + '/'}`} style="margin-right: 1rem;">← {translations.backToHome}</a>
+        <a href={`/${locale}/about/`}>About →</a>
+    </nav>
+</Layout>

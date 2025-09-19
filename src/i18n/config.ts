@@ -1,0 +1,39 @@
+import ja from "./ja.json";
+import en from "./en.json";
+import ar from "./ar.json";
+
+export const ALL_LOCALES = ["ja", "en", "ar"] as const;
+export type Locale = typeof ALL_LOCALES[number];
+
+// デフォルト言語
+export const DEFAULT_LOCALE: Locale = "ja";
+
+// 言語ごとのメタデータ
+export const LOCALE_DATA: Record<Locale, { name: string; direction: "ltr" | "rtl" }> = {
+    ja: { name: "日本語", direction: "ltr" },
+    en: { name: "English", direction: "ltr" },
+    ar: { name: "العربية", direction: "rtl" },
+};
+
+// 翻訳オブジェクト
+export const translationsMap: Record<Locale, typeof ja> = {
+    ja,
+    en,
+    ar,
+};
+
+// ユーティリティ関数
+export function getTranslations(locale: Locale): typeof ja {
+    return translationsMap[locale] || translationsMap[DEFAULT_LOCALE];
+}
+
+export function isValidLocale(locale: string): locale is Locale {
+    return ALL_LOCALES.includes(locale as Locale);
+}
+
+export function getLocalePath(locale: Locale, path: string = ""): string {
+    if (locale === DEFAULT_LOCALE) {
+        return `/${path}`.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
+    }
+    return `/${locale}/${path}`.replace(/\/+/g, "/").replace(/\/$/, "") || `/${locale}`;
+}

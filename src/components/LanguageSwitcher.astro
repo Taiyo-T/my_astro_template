@@ -1,0 +1,53 @@
+---
+import { ALL_LOCALES, LOCALE_DATA, getLocalePath, type Locale } from "../i18n/config";
+
+interface Props {
+    currentLocale: Locale;
+    currentPath?: string;
+}
+
+const { currentLocale, currentPath = "" } = Astro.props;
+---
+
+<nav class="language-switcher">
+    {ALL_LOCALES.map((locale) => (
+        <a 
+            href={getLocalePath(locale, currentPath)}
+            class={currentLocale === locale ? "active" : ""}
+            hreflang={locale}
+        >
+            {LOCALE_DATA[locale].name}
+        </a>
+    ))}
+</nav>
+
+<style>
+    .language-switcher {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .language-switcher a {
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid #ddd;
+        transition: all 0.2s ease;
+    }
+    
+    .language-switcher a:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .language-switcher a.active {
+        background-color: #007acc;
+        color: white;
+        border-color: #007acc;
+    }
+    
+    .language-switcher a:not(:last-child)::after {
+        content: "";
+        margin-left: 0.5rem;
+    }
+</style>

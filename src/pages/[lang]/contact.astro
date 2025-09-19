@@ -1,0 +1,136 @@
+---
+import Layout from "../../components/Layout.astro";
+import { isValidLocale, getTranslations, DEFAULT_LOCALE, ALL_LOCALES } from "../../i18n/config";
+
+export async function getStaticPaths() {
+    return ALL_LOCALES.filter(locale => locale !== DEFAULT_LOCALE).map(lang => ({
+        params: { lang }
+    }));
+}
+
+const { lang } = Astro.params;
+
+if (!lang || !isValidLocale(lang)) {
+    return Astro.redirect(`/${DEFAULT_LOCALE}/contact/`);
+}
+
+const locale = lang;
+const translations = getTranslations(locale);
+
+const pageContent = {
+    en: {
+        title: "Contact Us",
+        description: "Contact us with your questions or feedback.",
+        intro: "If you have any questions or feedback, please feel free to contact us using the form below.",
+        nameLabel: "Name *",
+        emailLabel: "Email Address *",
+        subjectLabel: "Subject *",
+        messageLabel: "Message *",
+        submitButton: "Send Message",
+        otherContactTitle: "Other Contact Methods",
+        emailContact: "Email",
+        phoneContact: "Phone",
+        addressContact: "Address",
+        backHome: "← Back to Home",
+        toAbout: "About →"
+    },
+    ar: {
+        title: "اتصل بنا",
+        description: "تواصل معنا بأسئلتك أو ملاحظاتك.",
+        intro: "إذا كان لديك أي أسئلة أو ملاحظات، فلا تتردد في الاتصال بنا باستخدام النموذج أدناه.",
+        nameLabel: "الاسم *",
+        emailLabel: "عنوان البريد الإلكتروني *",
+        subjectLabel: "الموضوع *",
+        messageLabel: "الرسالة *",
+        submitButton: "إرسال الرسالة",
+        otherContactTitle: "طرق الاتصال الأخرى",
+        emailContact: "البريد الإلكتروني",
+        phoneContact: "الهاتف",
+        addressContact: "العنوان",
+        backHome: "← العودة للرئيسية",
+        toAbout: "حول ←"
+    },
+    ja: {
+        title: "お問い合わせ",
+        description: "お問い合わせページです。ご質問やご意見をお聞かせください。",
+        intro: "ご質問やご意見がございましたら、以下のフォームよりお気軽にお問い合わせください。",
+        nameLabel: "お名前 *",
+        emailLabel: "メールアドレス *",
+        subjectLabel: "件名 *",
+        messageLabel: "メッセージ *",
+        submitButton: "送信する",
+        otherContactTitle: "その他の連絡方法",
+        emailContact: "メール",
+        phoneContact: "電話",
+        addressContact: "住所",
+        backHome: "← ホームに戻る",
+        toAbout: "About →"
+    }
+};
+
+const content = pageContent[locale];
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={`${content.title} | ${translations.hello}`}
+    description={content.description}
+    currentPath="contact"
+>
+    <h1>{content.title}</h1>
+    <p>{content.intro}</p>
+    
+    <form style="max-width: 600px; margin: 2rem 0;">
+        <div style="margin-bottom: 1rem;">
+            <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{content.nameLabel}</label>
+            <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{content.emailLabel}</label>
+            <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{content.subjectLabel}</label>
+            <input type="text" id="subject" name="subject" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{content.messageLabel}</label>
+            <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+        </div>
+        
+        <button type="submit" style="background-color: #007acc; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+            {content.submitButton}
+        </button>
+    </form>
+    
+    <section style="margin-top: 3rem;">
+        <h2>{content.otherContactTitle}</h2>
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>{content.emailContact}</h3>
+                <p>info@example.com</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>{content.phoneContact}</h3>
+                <p>{locale === 'ar' ? '+966-1-234-5678' : locale === 'en' ? '+1-555-123-4567' : '03-1234-5678'}</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>{content.addressContact}</h3>
+                <p>
+                    {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 
+                     locale === 'en' ? 'New York, NY, USA' : 
+                     '東京都渋谷区123-456'}
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <nav style="margin-top: 2rem;">
+        <a href={`/${locale === 'ja' ? '' : locale + '/'}`} style="margin-right: 1rem;">{content.backHome}</a>
+        <a href={`/${locale}/about/`}>{content.toAbout}</a>
+    </nav>
+</Layout>

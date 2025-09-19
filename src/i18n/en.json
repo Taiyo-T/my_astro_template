@@ -1,0 +1,22 @@
+{
+  "hello": "Hello!",
+  "about": "This is an Astro site.",
+  "aboutTitle": "About this site",
+  "aboutContent": "This page is About in English.",
+  "contact": "Contact",
+  "blog": "Blog",
+  "home": "Home",
+  "navigation": "Navigation",
+  "language": "Language",
+  "pageExamples": "Page Examples",
+  "backToHome": "Back to Home",
+  "readMore": "Read More",
+  "posted": "Posted",
+  "author": "Author",
+  "tags": "Tags",
+  "categories": "Categories",
+  "search": "Search",
+  "noResults": "No results found",
+  "loading": "Loading...",
+  "error": "An error occurred"
+}

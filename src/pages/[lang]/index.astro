@@ -1,0 +1,50 @@
+---
+import Layout from "../../components/Layout.astro";
+import { isValidLocale, getTranslations, DEFAULT_LOCALE, ALL_LOCALES } from "../../i18n/config";
+
+export async function getStaticPaths() {
+    return ALL_LOCALES.filter(locale => locale !== DEFAULT_LOCALE).map(lang => ({
+        params: { lang }
+    }));
+}
+
+const { lang } = Astro.params;
+
+// 言語が有効かチェック
+if (!lang || !isValidLocale(lang)) {
+    return Astro.redirect(`/${DEFAULT_LOCALE}/`);
+}
+
+const locale = lang;
+const translations = getTranslations(locale);
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={translations.hello}
+    description={translations.about}
+>
+    <h1>{translations.hello}</h1>
+    <p>{translations.about}</p>
+    
+    <section>
+        <h2>{translations.aboutTitle}</h2>
+        <p>{translations.aboutContent}</p>
+    </section>
+    
+    <section>
+        <h2>{locale === "en" ? "Page Examples" : locale === "ar" ? "أمثلة الصفحات" : "ページ例"}</h2>
+        <ul>
+            <li><a href={`/${locale}/about/`}>
+                {locale === "en" ? "About Page" : locale === "ar" ? "صفحة حول" : "About ページ"}
+            </a></li>
+            <li><a href={`/${locale}/contact/`}>
+                {locale === "en" ? "Contact Page" : locale === "ar" ? "صفحة الاتصال" : "Contact ページ"}
+            </a></li>
+            <li><a href={`/${locale}/blog/`}>
+                {locale === "en" ? "Blog Page" : locale === "ar" ? "صفحة المدونة" : "Blog ページ"}
+            </a></li>
+        </ul>
+    </section>
+</Layout>

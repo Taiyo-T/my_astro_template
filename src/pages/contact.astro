@@ -1,0 +1,67 @@
+---
+import Layout from "../components/Layout.astro";
+import { DEFAULT_LOCALE, getTranslations } from "../i18n/config";
+
+const locale = DEFAULT_LOCALE;
+const translations = getTranslations(locale);
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={`お問い合わせ | ${translations.hello}`}
+    description="お問い合わせページです。ご質問やご意見をお聞かせください。"
+    currentPath="contact"
+>
+    <h1>お問い合わせ</h1>
+    <p>ご質問やご意見がございましたら、以下のフォームよりお気軽にお問い合わせください。</p>
+    
+    <form style="max-width: 600px; margin: 2rem 0;">
+        <div style="margin-bottom: 1rem;">
+            <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">お名前 *</label>
+            <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">メールアドレス *</label>
+            <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">件名 *</label>
+            <input type="text" id="subject" name="subject" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">メッセージ *</label>
+            <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+        </div>
+        
+        <button type="submit" style="background-color: #007acc; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+            送信する
+        </button>
+    </form>
+    
+    <section style="margin-top: 3rem;">
+        <h2>その他の連絡方法</h2>
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>メール</h3>
+                <p>info@example.com</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>電話</h3>
+                <p>03-1234-5678</p>
+            </div>
+            <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
+                <h3>住所</h3>
+                <p>東京都渋谷区123-456</p>
+            </div>
+        </div>
+    </section>
+    
+    <nav style="margin-top: 2rem;">
+        <a href="/" style="margin-right: 1rem;">← ホームに戻る</a>
+        <a href="/about/">About →</a>
+    </nav>
+</Layout>
