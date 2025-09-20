@@ -1,3 +1,6 @@
+AIを用いて制作されました。
+
+
 # Astro Starter Kit: Basics
 
 ```sh
