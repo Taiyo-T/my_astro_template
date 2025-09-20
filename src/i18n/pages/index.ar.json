@@ -4,5 +4,7 @@
   "pageExamples": "أمثلة الصفحات",
   "aboutPage": "صفحة حول",
   "contactPage": "صفحة الاتصال",
-  "blogPage": "صفحة المدونة"
+  "newsPage": "صفحة الأخبار",
+  "latestNews": "أحدث الأخبار",
+  "viewAllNews": "عرض جميع الأخبار"
 }

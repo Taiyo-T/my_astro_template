@@ -1,31 +1,39 @@
 {
-  "title": "Blog",
-  "description": "Technical blog and tutorials about web development.",
-  "intro": "Technical blog and tutorials about the latest web development technologies and Astro framework.",
-  "blogPosts": [
+  "title": "News",
+  "description": "Latest news and updates from our team.",
+  "intro": "Stay updated with the latest news, technology trends, and product updates from our team.",
+  "newsArticles": [
     {
       "id": 1,
-      "title": "How to Create Multilingual Sites with Astro",
-      "excerpt": "A detailed guide on creating multilingual websites using Astro framework.",
+      "title": "Astro 5.0 Framework Released",
+      "excerpt": "Astro 5.0 has been officially released with exciting new features and improvements.",
       "date": "2025-01-15",
-      "author": "Developer",
-      "tags": ["Astro", "i18n", "Multilingual", "Web Development"]
+      "author": "Editorial Team",
+      "tags": ["Astro", "Release", "Web Framework"]
     },
     {
       "id": 2,
-      "title": "Combining TypeScript with Astro",
-      "excerpt": "Learn how to make your Astro projects more robust using TypeScript.",
-      "date": "2025-01-10",
-      "author": "Developer",
-      "tags": ["TypeScript", "Astro", "Type Safety"]
+      "title": "TypeScript 5.7 New Features Announced",
+      "excerpt": "Discover the new features and performance improvements in TypeScript 5.7.",
+      "date": "2025-01-12",
+      "author": "Tech Writer",
+      "tags": ["TypeScript", "Programming", "Update"]
     },
     {
       "id": 3,
-      "title": "Benefits of Static Site Generation",
-      "excerpt": "Exploring the advantages of SSG and how to implement it with Astro.",
-      "date": "2025-01-05",
-      "author": "Developer",
-      "tags": ["SSG", "Performance", "SEO"]
+      "title": "Updated Web Accessibility Guidelines 2025",
+      "excerpt": "The 2025 Web Accessibility Guidelines have been updated with important changes.",
+      "date": "2025-01-10",
+      "author": "UX Designer",
+      "tags": ["Accessibility", "Guidelines", "Web Standards"]
+    },
+    {
+      "id": 4,
+      "title": "Frontend Development Trends 2025",
+      "excerpt": "Predictions for the most important frontend development trends to watch in 2025.",
+      "date": "2025-01-08",
+      "author": "Tech Analyst",
+      "tags": ["Trends", "Frontend", "2025"]
     }
   ]
 }

@@ -4,5 +4,7 @@
   "pageExamples": "Page Examples",
   "aboutPage": "About Page",
   "contactPage": "Contact Page",
-  "blogPage": "Blog Page"
+  "newsPage": "News Page",
+  "latestNews": "Latest News",
+  "viewAllNews": "View All News"
 }

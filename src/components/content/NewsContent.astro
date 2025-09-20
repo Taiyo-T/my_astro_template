@@ -1,0 +1,198 @@
+---
+import { type Locale } from "../../i18n/config";
+import { getCollection } from 'astro:content';
+
+interface Props {
+    locale: Locale;
+    translations: any;
+    pageTranslations: any;
+}
+
+const { locale, translations, pageTranslations } = Astro.props;
+const DEFAULT_LOCALE = "ja";
+
+// Markdownニュース記事を取得
+const allNewsEntries = await getCollection('news');
+
+// ユーザーの要求により、日本語記事のみを使用
+// 他の言語のページでも日本語記事を表示（要求に従い）
+const jaNewsEntries = allNewsEntries.filter(entry => entry.id.endsWith('-ja.md'));
+
+// ニュース記事をデータ形式に変換
+const newsArticles = jaNewsEntries.map((entry, index) => ({
+    id: index + 1,
+    title: entry.data.title,
+    excerpt: entry.data.description,
+    date: entry.data.pubDate.toLocaleDateString(locale === 'ja' ? 'ja-JP' : locale === 'ar' ? 'ar' : 'en-US'),
+    author: entry.data.author,
+    tags: entry.data.tags,
+}));
+---
+
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{pageTranslations.title}</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{pageTranslations.intro}</p>
+    </div>
+    
+    <!-- 検索・フィルター機能 -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <div class="flex-1">
+                <label for="search-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {locale === 'ja' ? 'タイトルで検索' : locale === 'en' ? 'Search by title' : 'البحث بالعنوان'}
+                </label>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder={locale === 'ja' ? 'ニュースのタイトルを入力...' : locale === 'en' ? 'Enter news title...' : 'أدخل عنوان الخبر...'}
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                />
+            </div>
+            <div class="lg:w-64">
+                <label for="tag-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {locale === 'ja' ? 'タグで絞り込み' : locale === 'en' ? 'Filter by tag' : 'تصفية بالعلامة'}
+                </label>
+                <select
+                    id="tag-filter"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                >
+                    <option value="">{locale === 'ja' ? '全てのタグ' : locale === 'en' ? 'All tags' : 'جميع العلامات'}</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button
+                    id="clear-filters"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                >
+                    {locale === 'ja' ? 'クリア' : locale === 'en' ? 'Clear' : 'مسح'}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ニュース記事一覧 -->
+    <div id="news-container" class="space-y-8">
+        {newsArticles.map((article) => (
+            <article 
+                class="news-article bg-white dark:bg-gray-800 p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                data-title={article.title.toLowerCase()}
+                data-tags={article.tags.join(',')}
+            >
+                <h2 class="text-2xl font-semibold mb-2">
+                    <a href={locale === DEFAULT_LOCALE ? `/news/${article.id}/` : `/${locale}/news/${article.id}/`} class="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 no-underline transition-colors">
+                        {article.title}
+                    </a>
+                </h2>
+                
+                <div class="flex gap-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                    <span>{translations.posted}: {article.date}</span>
+                    <span>{translations.author}: {article.author}</span>
+                </div>
+                
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">{article.excerpt}</p>
+                
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    {article.tags.map((tag: string) => (
+                        <span class="tag-item bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-sm cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" data-tag={tag}>
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                
+                <a href={locale === DEFAULT_LOCALE ? `/news/${article.id}/` : `/${locale}/news/${article.id}/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-semibold transition-colors">
+                    {translations.readMore} →
+                </a>
+            </article>
+        ))}
+    </div>
+    
+    <!-- 結果が見つからない場合 -->
+    <div id="no-results" class="hidden text-center py-8">
+        <p class="text-gray-600 dark:text-gray-400 text-lg">
+            {locale === 'ja' ? '検索条件に一致するニュースが見つかりませんでした。' : locale === 'en' ? 'No news found matching your search criteria.' : 'لم يتم العثور على أخبار تطابق معايير البحث.'}
+        </p>
+    </div>
+    
+    <nav class="mt-8 flex gap-4">
+        <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">← {translations.backToHome}</a>
+        <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">About →</a>
+    </nav>
+</div>
+
+<script define:vars={{ newsArticles }}>
+    // 検索・フィルター機能
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const tagFilter = document.getElementById('tag-filter');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        const newsContainer = document.getElementById('news-container');
+        const noResults = document.getElementById('no-results');
+        const articles = document.querySelectorAll('.news-article');
+        
+        // 全てのタグを収集してセレクトボックスに追加
+        const allTags = new Set();
+        newsArticles.forEach(article => {
+            article.tags.forEach(tag => allTags.add(tag));
+        });
+        
+        // タグオプションを追加
+        allTags.forEach(tag => {
+            const option = document.createElement('option');
+            option.value = tag;
+            option.textContent = tag;
+            tagFilter.appendChild(option);
+        });
+        
+        // フィルター機能
+        function filterArticles() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedTag = tagFilter.value;
+            let visibleCount = 0;
+            
+            articles.forEach(article => {
+                const title = article.dataset.title;
+                const tags = article.dataset.tags.split(',');
+                
+                const matchesSearch = !searchTerm || title.includes(searchTerm);
+                const matchesTag = !selectedTag || tags.includes(selectedTag);
+                
+                if (matchesSearch && matchesTag) {
+                    article.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+            
+            // 結果が見つからない場合の表示切り替え
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+                newsContainer.style.display = 'none';
+            } else {
+                noResults.classList.add('hidden');
+                newsContainer.style.display = 'block';
+            }
+        }
+        
+        // イベントリスナー
+        searchInput.addEventListener('input', filterArticles);
+        tagFilter.addEventListener('change', filterArticles);
+        
+        // クリアボタン
+        clearFiltersBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            tagFilter.value = '';
+            filterArticles();
+        });
+        
+        // タグクリック機能
+        document.querySelectorAll('.tag-item').forEach(tagElement => {
+            tagElement.addEventListener('click', function() {
+                const tagValue = this.dataset.tag;
+                tagFilter.value = tagValue;
+                filterArticles();
+            });
+        });
+    });
+</script>

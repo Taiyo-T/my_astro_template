@@ -1,0 +1,111 @@
+---
+import { type Locale } from "../../i18n/config";
+
+interface Props {
+    locale: Locale;
+    translations: any;
+    pageTranslations: any;
+}
+
+const { locale, translations, pageTranslations } = Astro.props;
+const DEFAULT_LOCALE = "ja";
+
+// ニュース記事データを動的にインポート
+let newsData = null;
+try {
+    newsData = await import(`../../i18n/pages/blog.${locale}.json`);
+} catch (error) {
+    console.warn(`Failed to load news data for locale ${locale}`);
+}
+
+// 最新2件のニュース記事を取得
+const latestNews = newsData?.newsArticles?.slice(0, 2) || [];
+---
+
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{translations.hello}</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{translations.about}</p>
+    </div>
+    
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 transition-colors">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4">{translations.aboutTitle}</h2>
+        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{translations.aboutContent}</p>
+    </section>
+    
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 transition-colors">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">{pageTranslations.pageExamples}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a 
+                href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}
+                class="block p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 transition-colors duration-200"
+            >
+                <h3 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-2">{pageTranslations.aboutPage}</h3>
+                <p class="text-blue-700 dark:text-blue-400 text-sm">
+                    {locale === 'en' ? 'Learn more about this website and its features.' : 
+                     locale === 'ar' ? 'تعرف أكثر على هذا الموقع وميزاته.' : 
+                     'このサイトの詳細と機能について学びましょう。'}
+                </p>
+            </a>
+            
+            <a 
+                href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}
+                class="block p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700 hover:bg-green-100 dark:hover:bg-green-900/30 hover:border-green-300 dark:hover:border-green-600 transition-colors duration-200"
+            >
+                <h3 class="text-lg font-medium text-green-900 dark:text-green-300 mb-2">{pageTranslations.contactPage}</h3>
+                <p class="text-green-700 dark:text-green-400 text-sm">
+                    {locale === 'en' ? 'Get in touch with us for any questions or feedback.' : 
+                     locale === 'ar' ? 'تواصل معنا لأي أسئلة أو ملاحظات.' : 
+                     'ご質問やフィードバックがございましたらお気軽にお問い合わせください。'}
+                </p>
+            </a>
+            
+            <a 
+                href={locale === DEFAULT_LOCALE ? "/news/" : `/${locale}/news/`}
+                class="block p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:border-purple-300 dark:hover:border-purple-600 transition-colors duration-200"
+            >
+                <h3 class="text-lg font-medium text-purple-900 dark:text-purple-300 mb-2">{pageTranslations.newsPage}</h3>
+                <p class="text-purple-700 dark:text-purple-400 text-sm">
+                    {locale === 'en' ? 'Read our latest news and updates.' : 
+                     locale === 'ar' ? 'اقرأ أحدث الأخبار والتحديثات.' : 
+                     '最新のニュースと更新情報をお読みください。'}
+                </p>
+            </a>
+        </div>
+    </section>
+    
+    {/* 最新ニュースセクション */}
+    {latestNews.length > 0 && (
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 transition-colors">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{pageTranslations.latestNews}</h2>
+                <a 
+                    href={locale === DEFAULT_LOCALE ? "/news/" : `/${locale}/news/`}
+                    class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+                >
+                    {pageTranslations.viewAllNews} →
+                </a>
+            </div>
+            
+            <div class="space-y-4">
+                {latestNews.map((article: any) => (
+                    <article class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <h3 class="text-lg font-medium mb-2">
+                            <a 
+                                href={`/${locale}/news/${article.id}/`}
+                                class="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 no-underline transition-colors"
+                            >
+                                {article.title}
+                            </a>
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{article.excerpt}</p>
+                        <div class="flex gap-4 text-xs text-gray-500 dark:text-gray-500">
+                            <span>{translations.posted}: {article.date}</span>
+                            <span>{translations.author}: {article.author}</span>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </section>
+    )}
+</div>

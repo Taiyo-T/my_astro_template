@@ -1,0 +1,56 @@
+---
+interface Props {
+    locale: string;
+    translations: Record<string, string>;
+}
+
+const { locale, translations } = Astro.props;
+---
+
+<footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16 transition-colors">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{translations.hello}</h3>
+                <p class="text-gray-600 dark:text-gray-400">{translations.about}</p>
+            </div>
+            
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {locale === 'en' ? 'Quick Links' : locale === 'ar' ? 'روابط سريعة' : 'クイックリンク'}
+                </h3>
+                <nav class="flex flex-col space-y-2">
+                    <a href={locale === 'ja' ? '/' : `/${locale}/`} class="nav-link text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        {translations.home}
+                    </a>
+                    <a href={locale === 'ja' ? '/about/' : `/${locale}/about/`} class="nav-link text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        {translations.aboutTitle}
+                    </a>
+                    <a href={locale === 'ja' ? '/contact/' : `/${locale}/contact/`} class="nav-link text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        {translations.contact}
+                    </a>
+                    <a href={locale === 'ja' ? '/news/' : `/${locale}/news/`} class="nav-link text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        {translations.blog}
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {locale === 'en' ? 'Contact Info' : locale === 'ar' ? 'معلومات الاتصال' : 'お問い合わせ先'}
+                </h3>
+                <div class="text-gray-600 dark:text-gray-400 space-y-1">
+                    <p>info@example.com</p>
+                    <p>{locale === 'ar' ? '+966-1-234-5678' : locale === 'en' ? '+1-555-123-4567' : '03-1234-5678'}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pt-8 border-t border-gray-300 dark:border-gray-600 text-center">
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                &copy; 2025 {translations.hello}. 
+                {locale === 'en' ? 'All rights reserved.' : locale === 'ar' ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
+            </p>
+        </div>
+    </div>
+</footer>

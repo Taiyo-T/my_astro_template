@@ -1,0 +1,37 @@
+---
+import { type Locale } from "../../i18n/config";
+
+interface Props {
+    locale: Locale;
+    translations: any;
+    pageTranslations: any;
+}
+
+const { locale, translations, pageTranslations } = Astro.props;
+const DEFAULT_LOCALE = "ja";
+---
+
+<div>
+    <h1>{pageTranslations.title}</h1>
+    <p>{translations.aboutContent}</p>
+    
+    <section>
+        <h2>{pageTranslations.detailsTitle}</h2>
+        <p>{pageTranslations.detailsContent}</p>
+        
+        <h3>{pageTranslations.techSpecsTitle}</h3>
+        <ul>
+            {pageTranslations.techSpecs?.map((spec: string) => <li>{spec}</li>)}
+        </ul>
+        
+        <h3>{pageTranslations.featuresTitle}</h3>
+        <ul>
+            {pageTranslations.features?.map((feature: string) => <li>{feature}</li>)}
+        </ul>
+    </section>
+    
+    <nav style="margin-top: 2rem;">
+        <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">{pageTranslations.backHome}</a>
+        <a href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}>{pageTranslations.toContact}</a>
+    </nav>
+</div>

@@ -1,5 +1,9 @@
 ---
 import Layout from "../components/Layout.astro";
+import IndexContent from "../components/content/IndexContent.astro";
+import AboutContent from "../components/content/AboutContent.astro";
+import ContactContent from "../components/content/ContactContent.astro";
+import NewsContent from "../components/content/NewsContent.astro";
 import { 
     isValidLocale, 
     getTranslations, 
@@ -9,7 +13,7 @@ import {
 } from "../i18n/config";
 
 export async function getStaticPaths() {
-    const pages = ["index", "about", "contact", "blog"];
+    const pages = ["index", "about", "contact", "news"];
     const paths: any[] = [];
     
     // 日本語（デフォルト）のパス - slugなしで直接ルート
@@ -83,159 +87,87 @@ const pageTranslations = await getPageTranslations(locale, pageName);
     currentPath={pageName === "index" ? "" : pageName}
 >
     {pageName === "index" && (
-        <div>
-            <h1>{translations.hello}</h1>
-            <p>{translations.about}</p>
-            
-            <section>
-                <h2>{translations.aboutTitle}</h2>
-                <p>{translations.aboutContent}</p>
-            </section>
-            
-            <section>
-                <h2>{pageTranslations.pageExamples}</h2>
-                <ul>
-                    <li><a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>
-                        {pageTranslations.aboutPage}
-                    </a></li>
-                    <li><a href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}>
-                        {pageTranslations.contactPage}
-                    </a></li>
-                    <li><a href={locale === DEFAULT_LOCALE ? "/blog/" : `/${locale}/blog/`}>
-                        {pageTranslations.blogPage}
-                    </a></li>
-                </ul>
-            </section>
-        </div>
+        <IndexContent 
+            locale={locale} 
+            translations={translations} 
+            pageTranslations={pageTranslations} 
+        />
     )}
 
     {pageName === "about" && (
-        <div>
-            <h1>{pageTranslations.title}</h1>
-            <p>{translations.aboutContent}</p>
-            
-            <section>
-                <h2>{pageTranslations.detailsTitle}</h2>
-                <p>{pageTranslations.detailsContent}</p>
-                
-                <h3>{pageTranslations.techSpecsTitle}</h3>
-                <ul>
-                    {pageTranslations.techSpecs?.map((spec: string) => <li>{spec}</li>)}
-                </ul>
-                
-                <h3>{pageTranslations.featuresTitle}</h3>
-                <ul>
-                    {pageTranslations.features?.map((feature: string) => <li>{feature}</li>)}
-                </ul>
-            </section>
-            
-            <nav style="margin-top: 2rem;">
-                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">{pageTranslations.backHome}</a>
-                <a href={locale === DEFAULT_LOCALE ? "/contact/" : `/${locale}/contact/`}>{pageTranslations.toContact}</a>
-            </nav>
-        </div>
+        <AboutContent 
+            locale={locale} 
+            translations={translations} 
+            pageTranslations={pageTranslations} 
+        />
     )}
 
     {pageName === "contact" && (
-        <div>
-            <h1>{pageTranslations.title}</h1>
-            <p>{pageTranslations.intro}</p>
-            
-            <form style="max-width: 600px; margin: 2rem 0;">
-                <div style="margin-bottom: 1rem;">
-                    <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.nameLabel}</label>
-                    <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
-                </div>
-                
-                <div style="margin-bottom: 1rem;">
-                    <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.emailLabel}</label>
-                    <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
-                </div>
-                
-                <div style="margin-bottom: 1rem;">
-                    <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.subjectLabel}</label>
-                    <input type="text" id="subject" name="subject" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
-                </div>
-                
-                <div style="margin-bottom: 1rem;">
-                    <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">{pageTranslations.messageLabel}</label>
-                    <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
-                </div>
-                
-                <button type="submit" style="background-color: #007acc; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
-                    {pageTranslations.submitButton}
-                </button>
-            </form>
-            
-            <section style="margin-top: 3rem;">
-                <h2>{pageTranslations.otherContactTitle}</h2>
-                <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
-                        <h3>{pageTranslations.emailContact}</h3>
-                        <p>info@example.com</p>
-                    </div>
-                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
-                        <h3>{pageTranslations.phoneContact}</h3>
-                        <p>{locale === 'ar' ? '+966-1-234-5678' : locale === 'en' ? '+1-555-123-4567' : '03-1234-5678'}</p>
-                    </div>
-                    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 8px;">
-                        <h3>{pageTranslations.addressContact}</h3>
-                        <p>
-                            {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 
-                             locale === 'en' ? 'New York, NY, USA' : 
-                             '東京都渋谷区123-456'}
-                        </p>
-                    </div>
-                </div>
-            </section>
-            
-            <nav style="margin-top: 2rem;">
-                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">{pageTranslations.backHome}</a>
-                <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>{pageTranslations.toAbout}</a>
-            </nav>
-        </div>
+        <ContactContent 
+            locale={locale} 
+            translations={translations} 
+            pageTranslations={pageTranslations} 
+        />
     )}
 
-    {pageName === "blog" && (
-        <div>
-            <h1>{pageTranslations.title}</h1>
-            <p>{pageTranslations.intro}</p>
-            
-            <div style="display: grid; gap: 2rem; margin: 2rem 0;">
-                {pageTranslations.blogPosts?.map((post: any) => (
-                    <article style="padding: 1.5rem; border: 1px solid #eee; border-radius: 8px; transition: box-shadow 0.2s ease;">
-                        <h2 style="margin: 0 0 0.5rem 0;">
-                            <a href={`/${locale}/blog/${post.id}/`} style="text-decoration: none; color: #333;">
-                                {post.title}
-                            </a>
-                        </h2>
-                        
-                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
-                            <span>{translations.posted}: {post.date}</span>
-                            <span>{translations.author}: {post.author}</span>
-                        </div>
-                        
-                        <p style="margin: 1rem 0; line-height: 1.6;">{post.excerpt}</p>
-                        
-                        <div style="display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap;">
-                            {post.tags.map((tag: string) => (
-                                <span style="background-color: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                        
-                        <a href={`/${locale}/blog/${post.id}/`} style="color: #007acc; text-decoration: none; font-weight: bold;">
-                            {translations.readMore} →
-                        </a>
-                    </article>
-                ))}
-            </div>
-            
-            <nav style="margin-top: 2rem;">
-                <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} style="margin-right: 1rem;">← {translations.backToHome}</a>
-                <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`}>About →</a>
-            </nav>
-        </div>
+    {(pageName === "blog" || pageName === "news") && (
+        <NewsContent 
+            locale={locale} 
+            translations={translations} 
+            pageTranslations={pageTranslations} 
+        />
     )}
 </Layout>
+
+<script>
+    import { 
+        getPreferredLanguage, 
+        getSavedLanguage,
+        DEFAULT_LOCALE,
+        getLocalePath,
+        isValidLocale
+    } from "../i18n/config";
+
+    // ページ読み込み時に適切な言語にリダイレクト
+    function checkLanguageRedirect() {
+        const currentPath = window.location.pathname;
+        const savedLanguage = getSavedLanguage();
+        
+        // 保存された言語設定がある場合のみリダイレクト処理を実行
+        if (savedLanguage) {
+            // 現在のURLから言語コードとページパスを解析
+            let currentLocale = DEFAULT_LOCALE;
+            let pagePath = currentPath;
+            
+            // "/en/contact" のような形式をチェック
+            const pathParts = currentPath.split('/').filter(part => part);
+            if (pathParts.length > 0 && isValidLocale(pathParts[0])) {
+                currentLocale = pathParts[0];
+                pagePath = '/' + pathParts.slice(1).join('/');
+                if (pagePath === '/') pagePath = '';
+            } else if (currentPath !== '/') {
+                // "/contact" のような日本語ページの場合
+                pagePath = currentPath;
+            }
+            
+            // 保存された言語と現在の言語が異なる場合はリダイレクト
+            if (savedLanguage !== currentLocale) {
+                const redirectPath = getLocalePath(savedLanguage, pagePath.replace(/^\//, ''));
+                window.location.href = redirectPath;
+            }
+        } else {
+            // 保存された言語がない場合、ルートページのみブラウザ言語検出
+            if (currentPath === '/') {
+                const preferredLanguage = getPreferredLanguage();
+                
+                if (preferredLanguage !== DEFAULT_LOCALE) {
+                    const redirectPath = getLocalePath(preferredLanguage, '');
+                    window.location.href = redirectPath;
+                }
+            }
+        }
+    }
+
+    // DOM読み込み完了後に実行
+    document.addEventListener('DOMContentLoaded', checkLanguageRedirect);
+</script>

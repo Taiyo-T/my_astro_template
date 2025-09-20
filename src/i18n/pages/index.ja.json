@@ -4,5 +4,7 @@
   "pageExamples": "ページ例",
   "aboutPage": "About ページ",
   "contactPage": "Contact ページ", 
-  "blogPage": "Blog ページ"
+  "newsPage": "News ページ",
+  "latestNews": "最新ニュース",
+  "viewAllNews": "すべてのニュースを見る"
 }

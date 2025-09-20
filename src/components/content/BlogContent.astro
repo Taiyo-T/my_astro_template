@@ -1,0 +1,55 @@
+---
+import { type Locale } from "../../i18n/config";
+
+interface Props {
+    locale: Locale;
+    translations: any;
+    pageTranslations: any;
+}
+
+const { locale, translations, pageTranslations } = Astro.props;
+const DEFAULT_LOCALE = "ja";
+---
+
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{pageTranslations.title}</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{pageTranslations.intro}</p>
+    </div>
+    
+    <div class="space-y-8">
+        {pageTranslations.newsArticles?.map((article: any) => (
+            <article class="bg-white dark:bg-gray-800 p-6 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+                <h2 class="text-2xl font-semibold mb-2">
+                    <a href={`/${locale}/news/${article.id}/`} class="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 no-underline transition-colors">
+                        {article.title}
+                    </a>
+                </h2>
+                
+                <div class="flex gap-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                    <span>{translations.posted}: {article.date}</span>
+                    <span>{translations.author}: {article.author}</span>
+                </div>
+                
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">{article.excerpt}</p>
+                
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    {article.tags.map((tag: string) => (
+                        <span class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-sm">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                
+                <a href={`/${locale}/news/${article.id}/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-semibold transition-colors">
+                    {translations.readMore} →
+                </a>
+            </article>
+        ))}
+    </div>
+    
+    <nav class="mt-8 flex gap-4">
+        <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">← {translations.backToHome}</a>
+        <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">About →</a>
+    </nav>
+</div>

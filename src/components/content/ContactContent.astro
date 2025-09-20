@@ -1,0 +1,88 @@
+---
+import { type Locale } from "../../i18n/config";
+
+interface Props {
+    locale: Locale;
+    translations: any;
+    pageTranslations: any;
+}
+
+const { locale, translations, pageTranslations } = Astro.props;
+const DEFAULT_LOCALE = "ja";
+---
+
+<div class="space-y-8">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{pageTranslations.title}</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{pageTranslations.intro}</p>
+    </div>
+    
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 transition-colors">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">{pageTranslations.contactInfo}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700">
+                <h3 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-3">{pageTranslations.emailContact}</h3>
+                <p class="text-blue-700 dark:text-blue-400">info@example.com</p>
+                <p class="text-blue-700 dark:text-blue-400">support@example.com</p>
+            </div>
+            
+            <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700">
+                <h3 class="text-lg font-medium text-green-900 dark:text-green-300 mb-3">{pageTranslations.phoneContact}</h3>
+                <p class="text-green-700 dark:text-green-400">
+                    {locale === 'ar' ? '+966-1-234-5678' : locale === 'en' ? '+1-555-123-4567' : '03-1234-5678'}
+                </p>
+                <p class="text-green-700 dark:text-green-400 text-sm mt-1">
+                    {locale === 'ar' ? 'من 9 صباحاً إلى 5 مساءً' : locale === 'en' ? '9 AM - 5 PM' : '9:00-17:00'}
+                </p>
+            </div>
+            
+            <div class="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg border border-purple-200 dark:border-purple-700">
+                <h3 class="text-lg font-medium text-purple-900 dark:text-purple-300 mb-3">{pageTranslations.addressContact}</h3>
+                <p class="text-purple-700 dark:text-purple-400">
+                    {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 
+                     locale === 'en' ? 'New York, NY, USA' : 
+                     '東京都渋谷区123-456'}
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 transition-colors">
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">{pageTranslations.businessHours}</h2>
+        <div class="space-y-3">
+            <div class="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+                <span class="text-gray-600 dark:text-gray-400">
+                    {locale === 'ar' ? 'الاثنين - الجمعة' : locale === 'en' ? 'Monday - Friday' : '月曜日 - 金曜日'}
+                </span>
+                <span class="text-gray-900 dark:text-gray-100 font-medium">
+                    {locale === 'ar' ? '9:00 صباحاً - 6:00 مساءً' : locale === 'en' ? '9:00 AM - 6:00 PM' : '9:00 - 18:00'}
+                </span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+                <span class="text-gray-600 dark:text-gray-400">
+                    {locale === 'ar' ? 'السبت' : locale === 'en' ? 'Saturday' : '土曜日'}
+                </span>
+                <span class="text-gray-900 dark:text-gray-100 font-medium">
+                    {locale === 'ar' ? '10:00 صباحاً - 2:00 مساءً' : locale === 'en' ? '10:00 AM - 2:00 PM' : '10:00 - 14:00'}
+                </span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">
+                    {locale === 'ar' ? 'الأحد' : locale === 'en' ? 'Sunday' : '日曜日'}
+                </span>
+                <span class="text-red-600 dark:text-red-400 font-medium">
+                    {locale === 'ar' ? 'مغلق' : locale === 'en' ? 'Closed' : '休業'}
+                </span>
+            </div>
+        </div>
+    </section>
+    
+    <nav class="flex gap-4 justify-center">
+        <a href={locale === DEFAULT_LOCALE ? "/" : `/${locale}/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">
+            ← {pageTranslations.backHome}
+        </a>
+        <a href={locale === DEFAULT_LOCALE ? "/about/" : `/${locale}/about/`} class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline font-medium transition-colors">
+            {pageTranslations.toAbout} →
+        </a>
+    </nav>
+</div>

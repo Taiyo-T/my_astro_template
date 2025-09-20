@@ -3,51 +3,115 @@ import { ALL_LOCALES, LOCALE_DATA, getLocalePath, type Locale } from "../i18n/co
 
 interface Props {
     currentLocale: Locale;
-    currentPath?: string;
+    currentPath: string;
 }
 
-const { currentLocale, currentPath = "" } = Astro.props;
+const { currentLocale, currentPath } = Astro.props;
+
+// 現在のパスから言語プレフィックスを除去
+const cleanPath = currentLocale === "ja" 
+    ? currentPath 
+    : currentPath.replace(new RegExp(`^/${currentLocale}`), '') || '/';
+
+// RTL言語かどうかを判定
+const isRTL = LOCALE_DATA[currentLocale].direction === 'rtl';
+---
 ---
 
-<nav class="language-switcher">
-    {ALL_LOCALES.map((locale) => (
-        <a 
-            href={getLocalePath(locale, currentPath)}
-            class={currentLocale === locale ? "active" : ""}
-            hreflang={locale}
+<div class="relative inline-block text-left">
+    <div>
+        <button
+            type="button"
+            class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            id="language-menu-button"
+            aria-expanded="false"
+            aria-haspopup="true"
         >
-            {LOCALE_DATA[locale].name}
-        </a>
-    ))}
-</nav>
+            <span>{LOCALE_DATA[currentLocale].name}</span>
+            <svg class="-mr-1 h-5 w-5 text-gray-400 dark:text-gray-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </div>
 
-<style>
-    .language-switcher {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
+    <div
+        class={`absolute z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-600 focus:outline-none hidden ${isRTL ? 'left-0 origin-top-left' : 'right-0 origin-top-right'}`}
+        id="language-menu"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="language-menu-button"
+        tabindex="-1"
+    >
+        <div class="py-1" role="none">
+            {ALL_LOCALES.map((locale) => (
+                <a
+                    href={getLocalePath(locale, cleanPath)}
+                    class={`flex items-center px-4 py-2 text-sm transition-colors ${
+                        locale === currentLocale
+                            ? 'bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
+                    }`}
+                    role="menuitem"
+                    tabindex="-1"
+                    data-language={locale}
+                >
+                    <span class="flex-1">{LOCALE_DATA[locale].name}</span>
+                    {locale === currentLocale && (
+                        <svg class="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    )}
+                </a>
+            ))}
+        </div>
+    </div>
+</div>
+
+<script>
+    import { 
+        saveLanguage, 
+        type Locale
+    } from "../i18n/config";
+
+    // ドロップダウンメニューの制御
+    const button = document.getElementById('language-menu-button');
+    const menu = document.getElementById('language-menu');
+
+    if (button && menu) {
+        button.addEventListener('click', () => {
+            const isOpen = menu.classList.contains('hidden');
+            if (isOpen) {
+                menu.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+            } else {
+                menu.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // メニュー外クリックで閉じる
+        document.addEventListener('click', (event) => {
+            if (!button.contains(event.target as Node) && !menu.contains(event.target as Node)) {
+                menu.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+            }
+        });
     }
-    
-    .language-switcher a {
-        text-decoration: none;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        border: 1px solid #ddd;
-        transition: all 0.2s ease;
-    }
-    
-    .language-switcher a:hover {
-        background-color: #f5f5f5;
-    }
-    
-    .language-switcher a.active {
-        background-color: #007acc;
-        color: white;
-        border-color: #007acc;
-    }
-    
-    .language-switcher a:not(:last-child)::after {
-        content: "";
-        margin-left: 0.5rem;
-    }
-</style>
+
+    // 言語リンクのクリック処理
+    const languageLinks = document.querySelectorAll('[data-language]');
+    languageLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const selectedLanguage = (event.currentTarget as HTMLElement).dataset.language;
+            
+            if (selectedLanguage) {
+                // 言語設定を保存
+                saveLanguage(selectedLanguage as Locale);
+                
+                // ページ遷移
+                window.location.href = (event.currentTarget as HTMLAnchorElement).href;
+            }
+        });
+    });
+</script>

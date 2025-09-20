@@ -1,0 +1,134 @@
+---
+import { type Locale } from "../i18n/config";
+
+interface Props {
+    locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="relative inline-block">
+    <button
+        id="theme-toggle"
+        type="button"
+        class="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        aria-label={locale === 'ja' ? 'テーマを切り替え' : locale === 'en' ? 'Toggle theme' : 'تبديل المظهر'}
+        title={locale === 'ja' ? 'テーマを切り替え' : locale === 'en' ? 'Toggle theme' : 'تبديل المظهر'}
+    >
+        <!-- Light mode icon (sun) -->
+        <svg
+            id="theme-toggle-light-icon"
+            class="w-5 h-5 hidden"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fill-rule="evenodd"
+                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                clip-rule="evenodd"
+            ></path>
+        </svg>
+        
+        <!-- Dark mode icon (moon) -->
+        <svg
+            id="theme-toggle-dark-icon"
+            class="w-5 h-5 hidden"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+    </button>
+</div>
+
+<script>
+    // テーマの状態管理
+    const THEME_KEY = 'preferred_theme';
+    
+    function getStoredTheme(): string | null {
+        if (typeof localStorage === 'undefined') return null;
+        return localStorage.getItem(THEME_KEY);
+    }
+    
+    function setStoredTheme(theme: string): void {
+        if (typeof localStorage === 'undefined') return;
+        localStorage.setItem(THEME_KEY, theme);
+    }
+    
+    function getPreferredTheme(): string {
+        const stored = getStoredTheme();
+        if (stored) return stored;
+        
+        // システムの設定を確認
+        if (typeof window !== 'undefined' && window.matchMedia) {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        return 'light';
+    }
+    
+    function updateThemeIcons(theme: string): void {
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        
+        if (theme === 'dark') {
+            lightIcon?.classList.remove('hidden');
+            darkIcon?.classList.add('hidden');
+        } else {
+            lightIcon?.classList.add('hidden');
+            darkIcon?.classList.remove('hidden');
+        }
+    }
+    
+    function applyTheme(theme: string): void {
+        const html = document.documentElement;
+        
+        if (theme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        
+        updateThemeIcons(theme);
+        setStoredTheme(theme);
+    }
+    
+    function toggleTheme(): void {
+        const currentTheme = getPreferredTheme();
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+    }
+    
+    // 初期化
+    function initTheme(): void {
+        const theme = getPreferredTheme();
+        applyTheme(theme);
+        
+        // ボタンのイベントリスナーを設定
+        const toggleButton = document.getElementById('theme-toggle');
+        toggleButton?.addEventListener('click', toggleTheme);
+        
+        // システムテーマの変更を監視
+        if (typeof window !== 'undefined' && window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addEventListener('change', (e) => {
+                // 保存されたテーマがない場合のみシステム設定に従う
+                if (!getStoredTheme()) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        }
+    }
+    
+    // DOM読み込み完了後に初期化
+    document.addEventListener('DOMContentLoaded', initTheme);
+    
+    // ページ遷移時の即座適用（フラッシュ防止）
+    if (typeof window !== 'undefined') {
+        const theme = getPreferredTheme();
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
+</script>

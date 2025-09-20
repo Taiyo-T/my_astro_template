@@ -1,6 +1,8 @@
 ---
 import { LOCALE_DATA, type Locale } from "../i18n/config";
-import LanguageSwitcher from "./LanguageSwitcher.astro";
+import Header from "./layouts/Header.astro";
+import Footer from "./layouts/Footer.astro";
+import "../styles/global.css";
 
 interface Props {
     locale: Locale;
@@ -29,65 +31,116 @@ const localeData = LOCALE_DATA[locale];
     <title>{title}</title>
     <meta name="description" content={description} />
     
+    <!-- Ultra-aggressive flash prevention -->
+    <style>
+        /* Critical styles loaded first to prevent flash */
+        html {
+            transition: none !important;
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -o-transition: none !important;
+        }
+        
+        /* Immediately set dark colors as default to prevent white flash */
+        html {
+            background-color: #111827;
+            color: #f9fafb;
+            color-scheme: dark;
+        }
+        
+        /* Light mode overrides */
+        html:not(.dark) {
+            background-color: #f9fafb;
+            color: #111827;
+            color-scheme: light;
+        }
+        
+        /* Body styling for seamless transition */
+        body {
+            background-color: inherit;
+            color: inherit;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Prevent FOUC for all elements */
+        * {
+            -webkit-transition-duration: 0s !important;
+            -moz-transition-duration: 0s !important;
+            -o-transition-duration: 0s !important;
+            transition-duration: 0s !important;
+        }
+    </style>
+    
+    <!-- Immediate theme detection and application -->
+    <script is:inline>
+        (function() {
+            // Ultra-fast theme detection and application
+            const getTheme = () => {
+                try {
+                    const stored = localStorage.getItem('theme');
+                    if (stored === 'dark' || stored === 'light') return stored;
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                } catch {
+                    return 'dark'; // Default to dark to prevent white flash
+                }
+            };
+            
+            const applyTheme = (theme) => {
+                const html = document.documentElement;
+                const isDark = theme === 'dark';
+                
+                if (isDark) {
+                    html.classList.add('dark');
+                    html.style.backgroundColor = '#111827';
+                    html.style.colorScheme = 'dark';
+                } else {
+                    html.classList.remove('dark');
+                    html.style.backgroundColor = '#f9fafb';
+                    html.style.colorScheme = 'light';
+                }
+            };
+            
+            // Apply theme immediately
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system theme changes
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+            
+            // Cross-tab synchronization
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'theme') {
+                    applyTheme(getTheme());
+                }
+            });
+            
+            // Re-enable transitions after page load
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    document.documentElement.classList.add('transitions-enabled');
+                }, 100);
+            });
+        })();
+    </script>
+    
     <!-- Alternate language links -->
     <link rel="alternate" hreflang="ja" href="/" />
     <link rel="alternate" hreflang="en" href="/en/" />
     <link rel="alternate" hreflang="ar" href="/ar/" />
     <link rel="alternate" hreflang="x-default" href="/" />
-    
-    <style>
-        body {
-            font-family: system-ui, sans-serif;
-            margin: 0;
-            padding: 1rem;
-            line-height: 1.6;
-        }
-        
-        header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* RTL support */
-        [dir="rtl"] body {
-            text-align: right;
-        }
-        
-        [dir="rtl"] .header-content {
-            flex-direction: row-reverse;
-        }
-    </style>
 </head>
-<body>
-    <header>
-        <div class="header-content">
-            <a href="/" class="logo">{translations.hello}</a>
-            <LanguageSwitcher currentLocale={locale} currentPath={currentPath} />
-        </div>
-    </header>
-    <main>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+    <Header locale={locale} translations={translations} currentPath={currentPath} />
+    <main class="flex-1 max-w-4xl mx-auto px-4 py-8">
         <slot />
     </main>
+    <Footer locale={locale} translations={translations} />
 </body>
 </html>

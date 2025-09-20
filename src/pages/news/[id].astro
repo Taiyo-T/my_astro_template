@@ -1,0 +1,116 @@
+---
+import Layout from "../../components/Layout.astro";
+import { getCollection } from 'astro:content';
+import { 
+    getTranslations, 
+    DEFAULT_LOCALE 
+} from "../../i18n/config";
+
+export async function getStaticPaths() {
+    const newsEntries = await getCollection('news');
+    const paths: any[] = [];
+    
+    // 日本語のニュース記事のみ処理
+    const jaNewsEntries = newsEntries.filter(entry => entry.id.endsWith('-ja.md'));
+    
+    jaNewsEntries.forEach((entry, index) => {
+        const articleId = (index + 1).toString();
+        paths.push({ 
+            params: { 
+                id: articleId 
+            },
+            props: { entry }
+        });
+    });
+    
+    return paths;
+}
+
+const { id } = Astro.params;
+const { entry } = Astro.props;
+
+const locale = DEFAULT_LOCALE;
+const translations = getTranslations(locale);
+const { Content } = await entry.render();
+---
+
+<Layout 
+    locale={locale} 
+    translations={translations}
+    title={`${entry.data.title} | ${translations.hello}`}
+    description={entry.data.description}
+    currentPath="news"
+>
+    <main class="pt-20 px-4 lg:px-8 max-w-4xl mx-auto">
+        <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="p-6 lg:p-8">
+                <header class="mb-8">
+                    <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        {entry.data.title}
+                    </h1>
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
+                        <time datetime={entry.data.pubDate.toISOString()}>
+                            {entry.data.pubDate.toLocaleDateString('ja-JP')}
+                        </time>
+                        <span>著者: {entry.data.author}</span>
+                        <div class="flex flex-wrap gap-2">
+                            {entry.data.tags.map((tag: string) => (
+                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </header>
+                
+                <div class="prose prose-lg dark:prose-invert max-w-none">
+                    <Content />
+                </div>
+                
+                <footer class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <a 
+                        href="/news"
+                        class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                    >
+                        ← ニュース一覧に戻る
+                    </a>
+                </footer>
+            </div>
+        </article>
+    </main>
+</Layout>
+
+<style>
+    /* プロスクラスのダークモード対応 */
+    :global(.prose) {
+        @apply text-gray-900 dark:text-gray-100;
+    }
+    
+    :global(.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6) {
+        @apply text-gray-900 dark:text-white;
+    }
+    
+    :global(.prose p, .prose li) {
+        @apply text-gray-700 dark:text-gray-300;
+    }
+    
+    :global(.prose code) {
+        @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-1 py-0.5 rounded;
+    }
+    
+    :global(.prose pre) {
+        @apply bg-gray-100 dark:bg-gray-800;
+    }
+    
+    :global(.prose blockquote) {
+        @apply border-l-gray-300 dark:border-l-gray-600 text-gray-700 dark:text-gray-300;
+    }
+    
+    :global(.prose a) {
+        @apply text-blue-600 dark:text-blue-400;
+    }
+    
+    :global(.prose a:hover) {
+        @apply text-blue-800 dark:text-blue-300;
+    }
+</style>
